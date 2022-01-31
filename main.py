@@ -1,24 +1,18 @@
 import requests
 import json
+from azion_auth import AzionAuth
 
-
-def autenticacao():
-    cabecalho = {'Accept': 'application/json; version=3',
-               'Authorization': 'Basic [XXXXXXX]'}
-    requisicao = requests.post("https://api.azionapi.net/tokens", '', headers=cabecalho)
-    x = json.loads(requisicao.text)
-    print('Token: ' + x['token'])
-    x = x["token"]
-    return x
+azion = AzionAuth
+token = azion.autenticacao()
 
 
 def listarEdgesApplications():
     pagina = 1
-    ultimaPagina = 2
+    ultimaPagina = 3
     resposta = None
     cabecalho = {
       'Accept': 'application/json; version=3',
-      'Authorization': 'Token ' + autenticacao()
+      'Authorization': 'Token ' + token
     }
 
     while pagina <= ultimaPagina:
@@ -37,12 +31,12 @@ def listarEdgesApplications():
 def buscarOrigins(edgeId, originId):
     cabecalho = {
         'Accept': 'application/json; version=3',
-        'Authorization': 'Token ' + autenticacao()
+        'Authorization': 'Token ' + token
     }
 
     r = requests.get(f"https://api.azionapi.net/edge_applications/{edgeId}/origins/{originId}", headers=cabecalho)
-    x = json.loads(r.text)
-    print(x)
+    x = json.loads(r.text.replace("][", ','))
+    print(x['results']['addresses'][0]['address'])
 
 
 def run():
