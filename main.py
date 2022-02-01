@@ -19,7 +19,7 @@ def listarEdgesApplications():
         r = requests.get("https://api.azionapi.net/edge_applications?page=%s" % (pagina), headers=cabecalho)
         pagina = pagina + 1
         x = json.loads(r.text)
-        ultimaPagina = x["total_pages"]
+        #ultimaPagina = x["total_pages"]
         if (resposta == None):
             resposta = json.dumps(x["results"])
         else:
@@ -27,6 +27,7 @@ def listarEdgesApplications():
 
     print(resposta)
     return resposta
+
 
 def buscarOrigins(edgeId, originId):
     cabecalho = {
@@ -36,7 +37,7 @@ def buscarOrigins(edgeId, originId):
 
     r = requests.get(f"https://api.azionapi.net/edge_applications/{edgeId}/origins/{originId}", headers=cabecalho)
     x = json.loads(r.text.replace("][", ','))
-    print(x['results']['addresses'][0]['address'])
+    print(str(x['results']['addresses'][0]['address']))
 
 
 def run():
