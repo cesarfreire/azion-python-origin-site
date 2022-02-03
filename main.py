@@ -4,11 +4,11 @@ from azion_auth import AzionAuth
 
 azion = AzionAuth
 token = azion.autenticacao()
-
+arquivo = open('saida.txt', 'w')
 
 def listarEdgesApplications():
     pagina = 1
-    ultimaPagina = 3
+    ultimaPagina = 10
     resposta = None
     cabecalho = {
       'Accept': 'application/json; version=3',
@@ -37,11 +37,13 @@ def buscarOrigins(edgeId, originId):
 
     r = requests.get(f"https://api.azionapi.net/edge_applications/{edgeId}/origins/{originId}", headers=cabecalho)
     x = json.loads(r.text.replace("][", ','))
+    retorno = str(x['results']['addresses'][0]['address'])
     print(str(x['results']['addresses'][0]['address']))
+    return retorno
 
 
 def run():
-    edges = listarEdgesApplications();
+    edges = listarEdgesApplications()
     edges_list = json.loads(edges.replace("][", ','))
     for json_edge in edges_list:
         edge_id = json_edge['id']
@@ -49,7 +51,8 @@ def run():
         if json_edge['origins'][0]['name'] == "Origin S3":
             origin_id = json_edge['origins'][1]['origin_id']
             print(str(edge_name) + ": " + str(edge_id) + " -> " + str(origin_id))
-            buscarOrigins(edge_id, origin_id)
-
+            arquivo.write(str(edge_name) + ";" + str(edge_id) + ";" + str(origin_id) + ";")
+            arquivo.write(buscarOrigins(edge_id, origin_id) + '\n')
+    arquivo.close()
 
 run()
